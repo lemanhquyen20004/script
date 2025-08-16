@@ -1,145 +1,163 @@
--- Gui cơ bản
+\-- 🌟 Blox Fruits Optimizer + Info + FPS + Toggle Button (Giao diện đẹp) 🌟
+
 local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
 
--- Tạo ScreenGui
+-- ======= GUI chính =======
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "CustomMenu"
-screenGui.Parent = playerGui
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Khung menu
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 250, 0, 150)
-frame.Position = UDim2.new(0, 10, 0, 10)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BorderSizePixel = 0
-frame.Parent = screenGui
+-- ======= Nút ảnh để bật/tắt menu =======
+local toggleMenuBtn = Instance.new("ImageButton")
+toggleMenuBtn.Parent = screenGui
+toggleMenuBtn.Size = UDim2.new(0, 50, 0, 50)
+toggleMenuBtn.Position = UDim2.new(0, 15, 0, 15)
+toggleMenuBtn.BackgroundTransparency = 1
+toggleMenuBtn.Image = "rbxassetid://6031091004" -- icon ⚙
+toggleMenuBtn.ScaleType = Enum.ScaleType.Fit
+toggleMenuBtn.ImageColor3 = Color3.fromRGB(0, 255, 0)
 
--- Tiêu đề (có thể kéo)
+-- ======= Frame Menu =======
+local mainFrame = Instance.new("Frame")
+mainFrame.Parent = screenGui
+mainFrame.Size = UDim2.new(0, 280, 0, 180)
+mainFrame.Position = UDim2.new(0, 80, 0, 15)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.ClipsDescendants = true
+mainFrame.ZIndex = 2
+
+-- Shadow / Round effect (simulated)
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 12)
+uiCorner.Parent = mainFrame
+
+-- ======= Tiêu đề =======
 local title = Instance.new("TextLabel")
-title.Text = "Menu Tối Ưu"
-title.Size = UDim2.new(1, -40, 0, 30)
+title.Parent = mainFrame
+title.Size = UDim2.new(1, 0, 0, 35)
 title.Position = UDim2.new(0, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.Parent = frame
+title.Text = "⚡ Blox Fruits Optimizer"
+title.TextColor3 = Color3.fromRGB(0, 255, 128)
+title.Font = Enum.Font.Code
+title.TextSize = 18
+title.TextStrokeTransparency = 0.6
 
--- Icon bật/tắt menu
-local toggleIcon = Instance.new("ImageButton")
-toggleIcon.Size = UDim2.new(0, 40, 0, 40)
-toggleIcon.Position = UDim2.new(1, -40, 0, 0)
-toggleIcon.Image = "rbxassetid://114173553491760" -- link ảnh bạn đưa, đã upload lên Roblox
-toggleIcon.BackgroundTransparency = 1
-toggleIcon.Parent = frame
-
-local menuVisible = true
-toggleIcon.MouseButton1Click:Connect(function()
-    menuVisible = not menuVisible
-    frame.Visible = menuVisible
-end)
-
--- Drag & Drop Menu
-local dragging = false
-local dragInput, mousePos, framePos
-
-title.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        mousePos = input.Position
-        framePos = frame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-title.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - mousePos
-        frame.Position = UDim2.new(
-            framePos.X.Scale,
-            framePos.X.Offset + delta.X,
-            framePos.Y.Scale,
-            framePos.Y.Offset + delta.Y
-        )
-    end
-end)
-
--- Nút Bật/Tắt tối ưu
+-- ======= Nút bật/tắt tối ưu =======
 local toggleButton = Instance.new("TextButton")
-toggleButton.Text = "Tối Ưu: OFF"
-toggleButton.Size = UDim2.new(1, -20, 0, 30)
-toggleButton.Position = UDim2.new(0, 10, 0, 40)
-toggleButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-toggleButton.TextColor3 = Color3.new(1, 1, 1)
-toggleButton.Font = Enum.Font.SourceSansBold
-toggleButton.TextSize = 18
-toggleButton.Parent = frame
+toggleButton.Parent = mainFrame
+toggleButton.Size = UDim2.new(1, -20, 0, 35)
+toggleButton.Position = UDim2.new(0, 10, 0, 45)
+toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.Code
+toggleButton.TextSize = 15
+toggleButton.Text = "🔴 Tối ưu: OFF"
+toggleButton.AutoButtonColor = true
 
-local isOptimized = false
-toggleButton.MouseButton1Click:Connect(function()
-    isOptimized = not isOptimized
-    if isOptimized then
-        toggleButton.Text = "Tối Ưu: ON"
+local optimized = false
+local function optimizeGame(on)
+    if on then
+        settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 100000
+        Lighting.Brightness = 1
+        Lighting.OutdoorAmbient = Color3.new(0.5,0.5,0.5)
+        for _,v in pairs(Lighting:GetChildren()) do
+            if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") then
+                v:Destroy()
+            end
+        end
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("MeshPart") or obj:IsA("Part") then
+                obj.Material = Enum.Material.Plastic
+                obj.Reflectance = 0
+            end
+        end
     else
-        toggleButton.Text = "Tối Ưu: OFF"
+        settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
+        Lighting.GlobalShadows = true
     end
-end)
-
--- Thông tin người chơi
-local infoLabel = Instance.new("TextLabel")
-infoLabel.Size = UDim2.new(1, -20, 0, 60)
-infoLabel.Position = UDim2.new(0, 10, 0, 80)
-infoLabel.BackgroundTransparency = 1
-infoLabel.TextColor3 = Color3.new(1, 1, 1)
-infoLabel.TextWrapped = true
-infoLabel.Font = Enum.Font.SourceSans
-infoLabel.TextSize = 16
-infoLabel.Parent = frame
-
--- Cập nhật thông tin
-local function updateInfo()
-    local serverId = game.JobId
-    local playersCount = #Players:GetPlayers()
-    infoLabel.Text = "Tên: "..player.Name.."\nID Server: "..serverId.."\nSố Players: "..playersCount
 end
 
-RunService.RenderStepped:Connect(updateInfo)
+toggleButton.MouseButton1Click:Connect(function()
+    optimized = not optimized
+    optimizeGame(optimized)
+    if optimized then
+        toggleButton.Text = "🟢 Tối ưu: ON"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    else
+        toggleButton.Text = "🔴 Tối ưu: OFF"
+        toggleButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    end
+end)
 
--- Hiển thị FPS
+-- ======= Info người chơi =======
+local infoLabel = Instance.new("TextLabel")
+infoLabel.Parent = mainFrame
+infoLabel.Size = UDim2.new(1, -20, 0, 55)
+infoLabel.Position = UDim2.new(0, 10, 0, 90)
+infoLabel.BackgroundTransparency = 1
+infoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+infoLabel.Font = Enum.Font.Code
+infoLabel.TextSize = 14
+infoLabel.TextWrapped = true
+infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Cập nhật info mỗi 1 giây (ít tốn tài nguyên hơn)
+spawn(function()
+    while true do
+        local userName = player.Name
+        local serverID = game.JobId ~= "" and game.JobId or "N/A"
+        local playerCount = #Players:GetPlayers()
+        infoLabel.Text = "👤 User: "..userName.."\n🆔 Server: "..serverID.."\n👥 Players: "..playerCount
+        wait(1)
+    end
+end)
+
+-- ======= FPS Counter =======
 local fpsLabel = Instance.new("TextLabel")
-fpsLabel.Size = UDim2.new(0, 100, 0, 30)
-fpsLabel.Position = UDim2.new(1, -110, 0, 10)
-fpsLabel.BackgroundTransparency = 0.5
-fpsLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
-fpsLabel.TextColor3 = Color3.new(1,1,1)
-fpsLabel.Font = Enum.Font.SourceSansBold
-fpsLabel.TextSize = 18
 fpsLabel.Parent = screenGui
+fpsLabel.Size = UDim2.new(0, 120, 0, 30)
+fpsLabel.Position = UDim2.new(1, -140, 0, 15)
+fpsLabel.BackgroundTransparency = 0.25
+fpsLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
+fpsLabel.TextColor3 = Color3.fromRGB(0,255,0)
+fpsLabel.Font = Enum.Font.Code
+fpsLabel.TextSize = 18
+fpsLabel.Text = "FPS: ..."
+fpsLabel.ZIndex = 2
 
-local lastTime = tick()
+local lastUpdate = tick()
 local frameCount = 0
 RunService.RenderStepped:Connect(function()
     frameCount = frameCount + 1
     local now = tick()
-    if now - lastTime >= 1 then
-        fpsLabel.Text = "FPS: "..frameCount
+    if now - lastUpdate >= 1 then
+        fpsLabel.Text = "FPS: "..tostring(frameCount)
         frameCount = 0
-        lastTime = now
+        lastUpdate = now
     end
 end)
+
+-- ======= Toggle Menu =======
+toggleMenuBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+    -- Đổi màu icon khi menu mở/đóng
+    if mainFrame.Visible then
+        toggleMenuBtn.ImageColor3 = Color3.fromRGB(0,255,128)
+    else
+        toggleMenuBtn.ImageColor3 = Color3.fromRGB(255,255,255)
+    end
+end)
+
+print("✅ Menu Optimizer + Info + FPS Counter Loaded (Giao diện đẹp)")
