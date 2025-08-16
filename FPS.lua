@@ -88,7 +88,7 @@ toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleButton.Font = Enum.Font.Code
 toggleButton.TextSize = 16
-toggleButton.Text = "🔴 Tối ưu: OFF"
+toggleButton.Text = "🟢 Tối ưu: ON"
 toggleButton.AutoButtonColor = true
 toggleButton.ZIndex = 3
 
@@ -171,6 +171,7 @@ fpsLabel.Font = Enum.Font.Code
 fpsLabel.TextSize = 18
 fpsLabel.Text = "FPS: ..."
 fpsLabel.ZIndex = 3
+fpsLabel.Visible = true
 
 local lastUpdate = tick()
 local frameCount = 0
