@@ -136,19 +136,36 @@ toggleButton.MouseButton1Click:Connect(function()
 end)
 
 -- ======= Info người chơi =======
+-- ======= Info người chơi (đẹp hơn) =======
 local infoLabel = Instance.new("TextLabel")
 infoLabel.Parent = mainFrame
 infoLabel.Size = UDim2.new(1, -20, 0, 60)
 infoLabel.Position = UDim2.new(0, 10, 0, 90)
-infoLabel.BackgroundTransparency = 1
-infoLabel.TextColor3 = Color3.fromRGB(220,220,220)
+infoLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- nền nhẹ
+infoLabel.BackgroundTransparency = 0.15
+infoLabel.TextColor3 = Color3.fromRGB(180, 255, 180) -- màu chữ dịu mắt
 infoLabel.Font = Enum.Font.Code
 infoLabel.TextSize = 15
 infoLabel.TextWrapped = true
 infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+infoLabel.TextYAlignment = Enum.TextYAlignment.Top
 infoLabel.ZIndex = 3
-infoLabel.TextStrokeTransparency = 0.6
+infoLabel.TextStrokeTransparency = 0.5 -- stroke nhẹ để chữ nổi bật
 
+-- Bo tròn
+local infoCorner = Instance.new("UICorner")
+infoCorner.CornerRadius = UDim.new(0, 8)
+infoCorner.Parent = infoLabel
+
+-- Padding bên trong
+local infoPadding = Instance.new("UIPadding")
+infoPadding.PaddingLeft = UDim.new(0, 8)
+infoPadding.PaddingTop = UDim.new(0, 5)
+infoPadding.PaddingRight = UDim.new(0, 8)
+infoPadding.PaddingBottom = UDim.new(0, 5)
+infoPadding.Parent = infoLabel
+
+-- Cập nhật info mỗi 1 giây
 spawn(function()
     while true do
         local userName = player.Name
@@ -158,6 +175,7 @@ spawn(function()
         wait(1)
     end
 end)
+
 
 -- ======= FPS Counter =======
 local fpsLabel = Instance.new("TextLabel")
