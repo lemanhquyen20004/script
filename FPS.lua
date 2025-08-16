@@ -17,7 +17,7 @@ toggleMenuBtn.Parent = screenGui
 toggleMenuBtn.Size = UDim2.new(0, 40, 0, 40)
 toggleMenuBtn.Position = UDim2.new(0, 10, 0, 10)
 toggleMenuBtn.BackgroundTransparency = 1
-toggleMenuBtn.Image = "rbxassetid://114173553491760" -- icon ⚙
+toggleMenuBtn.Image = "rbxassetid://77397950" -- icon ⚙
 
 -- Frame Menu
 local mainFrame = Instance.new("Frame")
