@@ -1,6 +1,7 @@
 -- Gui cơ bản
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -18,10 +19,21 @@ frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 
+-- Tiêu đề (có thể kéo)
+local title = Instance.new("TextLabel")
+title.Text = "Menu Tối Ưu"
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+title.Parent = frame
+
 -- Icon bật/tắt menu
 local toggleIcon = Instance.new("ImageButton")
 toggleIcon.Size = UDim2.new(0, 40, 0, 40)
-toggleIcon.Position = UDim2.new(0, 220, 0, 0)
+toggleIcon.Position = UDim2.new(1, -40, 0, 0)
 toggleIcon.Image = "rbxassetid://114173553491760" -- link ảnh bạn đưa, đã upload lên Roblox
 toggleIcon.BackgroundTransparency = 1
 toggleIcon.Parent = frame
@@ -32,15 +44,41 @@ toggleIcon.MouseButton1Click:Connect(function()
     frame.Visible = menuVisible
 end)
 
--- Tiêu đề
-local title = Instance.new("TextLabel")
-title.Text = "Menu Tối Ưu"
-title.Size = UDim2.new(1, 0, 0, 30)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.Parent = frame
+-- Drag & Drop Menu
+local dragging = false
+local dragInput, mousePos, framePos
+
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+title.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        frame.Position = UDim2.new(
+            framePos.X.Scale,
+            framePos.X.Offset + delta.X,
+            framePos.Y.Scale,
+            framePos.Y.Offset + delta.Y
+        )
+    end
+end)
 
 -- Nút Bật/Tắt tối ưu
 local toggleButton = Instance.new("TextButton")
