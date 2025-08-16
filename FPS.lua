@@ -1,22 +1,33 @@
--- 🌟 Blox Fruits Optimizer + Menu Info + FPS Counter
--- Script an toàn, chỉ tối ưu game và hiển thị thông tin
+-- 🌟 Blox Fruits Optimizer + Menu Info + FPS Counter + Toggle Button + Draggable
+-- Menu có thể kéo thả
 
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
 -- GUI chính
 local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
+-- Nút ảnh để bật/tắt menu
+local toggleMenuBtn = Instance.new("ImageButton")
+toggleMenuBtn.Parent = screenGui
+toggleMenuBtn.Size = UDim2.new(0, 40, 0, 40)
+toggleMenuBtn.Position = UDim2.new(0, 10, 0, 10)
+toggleMenuBtn.BackgroundTransparency = 1
+toggleMenuBtn.Image = "rbxassetid://6031091004" -- icon ⚙
+
+-- Frame Menu
 local mainFrame = Instance.new("Frame")
 mainFrame.Parent = screenGui
 mainFrame.Size = UDim2.new(0, 250, 0, 150)
-mainFrame.Position = UDim2.new(0, 20, 0, 20)
+mainFrame.Position = UDim2.new(0, 60, 0, 10)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BackgroundTransparency = 0.2
 mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false -- ẩn mặc định
 
 -- Tiêu đề
 local title = Instance.new("TextLabel")
@@ -120,4 +131,36 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
-print("✅ Menu Optimizer + Info + FPS Counter Loaded")
+-- Toggle menu khi bấm nút ảnh
+toggleMenuBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+end)
+
+-- 📌 Kéo thả menu
+local dragging, dragStart, startPos
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+print("✅ Menu Optimizer + Info + FPS Counter + Toggle Button + Draggable Loaded")
