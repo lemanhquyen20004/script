@@ -1,4 +1,4 @@
-local Webhook_URL = "https://discord.com/api/webhooks/xxxxxxxxxx/xxxxxxxxxx"
+local Webhook_URL = "https://discord.com/api/webhooks/1410565696651399318/a6LgFUADXgbnq4NcPZspAWqYHCivwW93Zkfvsf6akJb23_CJ1ia3dpXvqB7dP-km_Z4N"
 local HttpService = game:GetService("HttpService")
 
 -- Hàm chọn màu theo rarity
